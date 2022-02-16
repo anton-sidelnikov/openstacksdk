@@ -71,8 +71,8 @@ class LoadBalancer(resource.Resource, tag.TagMixin):
     # VIP qos policy id
     vip_qos_policy_id = resource.Body('vip_qos_policy_id')
 
-    def delete(self, session, error_message=None):
-        request = self._prepare_request()
+    def delete(self, session, error_message=None, **kwargs):
+        request = self._prepare_request(**kwargs)
         headers = {
             "Accept": ""
         }
