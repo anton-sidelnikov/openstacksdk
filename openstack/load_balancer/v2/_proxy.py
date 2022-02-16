@@ -75,7 +75,7 @@ class Proxy(proxy.Proxy):
         return self._list(_lb.LoadBalancer, **query)
 
     def delete_load_balancer(self, load_balancer, ignore_missing=True,
-                             cascade=False):
+                             cascade=False, **attrs):
         """Delete a load balancer
 
         :param load_balancer: The load_balancer can be either the name or a
@@ -88,15 +88,17 @@ class Proxy(proxy.Proxy):
             delete a nonexistent load balancer.
         :param bool cascade: If true will delete all child objects of
             the load balancer.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        load_balancer = self._get_resource(_lb.LoadBalancer, load_balancer)
+        load_balancer = self._get_resource(_lb.LoadBalancer, load_balancer,
+                                           **attrs)
         load_balancer.cascade = cascade
         return self._delete(_lb.LoadBalancer, load_balancer,
-                            ignore_missing=ignore_missing)
+                            ignore_missing=ignore_missing, **attrs)
 
-    def find_load_balancer(self, name_or_id, ignore_missing=True):
+    def find_load_balancer(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single load balancer
 
         :param name_or_id: The name or ID of a load balancer
@@ -105,11 +107,12 @@ class Proxy(proxy.Proxy):
             when the load balancer does not exist.
             When set to ``True``, no exception will be set when attempting
             to delete a nonexistent load balancer.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_lb.LoadBalancer, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def update_load_balancer(self, load_balancer, **attrs):
         """Update a load balancer
@@ -153,7 +156,7 @@ class Proxy(proxy.Proxy):
         """
         return self._create(_listener.Listener, **attrs)
 
-    def delete_listener(self, listener, ignore_missing=True):
+    def delete_listener(self, listener, ignore_missing=True, **attrs):
         """Delete a listener
 
         :param listener: The value can be either the ID of a listner or a
@@ -163,13 +166,14 @@ class Proxy(proxy.Proxy):
             raised when the listner does not exist.
             When set to ``True``, no exception will be set when
             attempting to delete a nonexistent listener.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         self._delete(_listener.Listener, listener,
-                     ignore_missing=ignore_missing)
+                     ignore_missing=ignore_missing, **attrs)
 
-    def find_listener(self, name_or_id, ignore_missing=True):
+    def find_listener(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single listener
 
         :param name_or_id: The name or ID of a listener.
@@ -178,25 +182,27 @@ class Proxy(proxy.Proxy):
             raised when the resource does not exist.
             When set to ``True``, None will be returned when
             attempting to find a nonexistent resource.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.listener.Listener`
             or None
         """
         return self._find(_listener.Listener, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
-    def get_listener(self, listener):
+    def get_listener(self, listener, **attrs):
         """Get a single listener
 
         :param listener: The value can be the ID of a listener or a
             :class:`~openstack.load_balancer.v2.listener.Listener`
             instance.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.listener.Listener`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
             when no resource can be found.
         """
-        return self._get(_listener.Listener, listener)
+        return self._get(_listener.Listener, listener, **attrs)
 
     def get_listener_statistics(self, listener):
         """Get the listener statistics
@@ -255,6 +261,7 @@ class Proxy(proxy.Proxy):
         :param pool: Value is
             :class:`~openstack.load_balancer.v2.pool.Pool`
             instance.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One
             :class:`~openstack.load_balancer.v2.pool.Pool`
@@ -268,7 +275,7 @@ class Proxy(proxy.Proxy):
         """
         return self._list(_pool.Pool, **query)
 
-    def delete_pool(self, pool, ignore_missing=True):
+    def delete_pool(self, pool, ignore_missing=True, **attrs):
         """Delete a pool
 
         :param pool: The pool is a
@@ -279,13 +286,14 @@ class Proxy(proxy.Proxy):
             the pool does not exist.
             When set to ``True``, no exception will be set when attempting to
             delete a nonexistent pool.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._delete(_pool.Pool, pool,
-                            ignore_missing=ignore_missing)
+                            ignore_missing=ignore_missing, **attrs)
 
-    def find_pool(self, name_or_id, ignore_missing=True):
+    def find_pool(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single pool
 
         :param name_or_id: The name or ID of a pool
@@ -294,11 +302,12 @@ class Proxy(proxy.Proxy):
             when the pool does not exist.
             When set to ``True``, no exception will be set when attempting
             to delete a nonexistent pool.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_pool.Pool, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def update_pool(self, pool, **attrs):
         """Update a pool
@@ -331,7 +340,7 @@ class Proxy(proxy.Proxy):
         return self._create(_member.Member, pool_id=poolobj.id,
                             **attrs)
 
-    def delete_member(self, member, pool, ignore_missing=True):
+    def delete_member(self, member, pool, ignore_missing=True, **attrs):
         """Delete a member
 
         :param member:
@@ -345,14 +354,16 @@ class Proxy(proxy.Proxy):
             raised when the member does not exist.
             When set to ``True``, no exception will be set when
             attempting to delete a nonexistent member.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        poolobj = self._get_resource(_pool.Pool, pool)
+        poolobj = self._get_resource(_pool.Pool, pool, **attrs)
         self._delete(_member.Member, member,
-                     ignore_missing=ignore_missing, pool_id=poolobj.id)
+                     ignore_missing=ignore_missing,
+                     pool_id=poolobj.id, **attrs)
 
-    def find_member(self, name_or_id, pool, ignore_missing=True):
+    def find_member(self, name_or_id, pool, ignore_missing=True, **attrs):
         """Find a single member
 
         :param str name_or_id: The name or ID of a member.
@@ -364,15 +375,17 @@ class Proxy(proxy.Proxy):
             raised when the resource does not exist.
             When set to ``True``, None will be returned when
             attempting to find a nonexistent resource.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.member.Member`
             or None
         """
-        poolobj = self._get_resource(_pool.Pool, pool)
+        poolobj = self._get_resource(_pool.Pool, pool, **attrs)
         return self._find(_member.Member, name_or_id,
-                          ignore_missing=ignore_missing, pool_id=poolobj.id)
+                          ignore_missing=ignore_missing,
+                          pool_id=poolobj.id, **attrs)
 
-    def get_member(self, member, pool):
+    def get_member(self, member, pool, **attrs):
         """Get a single member
 
         :param member: The member can be the ID of a member or a
@@ -381,14 +394,15 @@ class Proxy(proxy.Proxy):
         :param pool: The pool can be either the ID of a pool or a
             :class:`~openstack.load_balancer.v2.pool.Pool` instance
             that the member belongs to.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.member.Member`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
             when no resource can be found.
         """
-        poolobj = self._get_resource(_pool.Pool, pool)
+        poolobj = self._get_resource(_pool.Pool, pool, **attrs)
         return self._get(_member.Member, member,
-                         pool_id=poolobj.id)
+                         pool_id=poolobj.id, **attrs)
 
     def members(self, pool, **query):
         """Return a generator of members
@@ -424,7 +438,7 @@ class Proxy(proxy.Proxy):
         return self._update(_member.Member, member,
                             pool_id=poolobj.id, **attrs)
 
-    def find_health_monitor(self, name_or_id, ignore_missing=True):
+    def find_health_monitor(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single health monitor
 
         :param name_or_id: The name or ID of a health monitor
@@ -433,6 +447,7 @@ class Proxy(proxy.Proxy):
             when the health monitor does not exist.
             When set to ``True``, no exception will be set when attempting
             to find a nonexistent health monitor.
+        :param dict attrs: Additional keyword arguments
 
         :returns: The
             :class:`openstack.load_balancer.v2.healthmonitor.HealthMonitor`
@@ -444,7 +459,7 @@ class Proxy(proxy.Proxy):
             is found and ignore_missing is ``False``.
         """
         return self._find(_hm.HealthMonitor, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def create_health_monitor(self, **attrs):
         """Create a new health monitor from attributes
@@ -460,18 +475,19 @@ class Proxy(proxy.Proxy):
 
         return self._create(_hm.HealthMonitor, **attrs)
 
-    def get_health_monitor(self, healthmonitor):
+    def get_health_monitor(self, healthmonitor, **attrs):
         """Get a health monitor
 
         :param healthmonitor: The value can be the ID of a health monitor or
             :class:`~openstack.load_balancer.v2.healthmonitor.HealthMonitor`
             instance.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One health monitor
         :rtype:
             :class:`~openstack.load_balancer.v2.healthmonitor.HealthMonitor`
         """
-        return self._get(_hm.HealthMonitor, healthmonitor)
+        return self._get(_hm.HealthMonitor, healthmonitor, **attrs)
 
     def health_monitors(self, **query):
         """Retrieve a generator of health monitors
@@ -489,7 +505,8 @@ class Proxy(proxy.Proxy):
         """
         return self._list(_hm.HealthMonitor, **query)
 
-    def delete_health_monitor(self, healthmonitor, ignore_missing=True):
+    def delete_health_monitor(self, healthmonitor, ignore_missing=True,
+                              **attrs):
         """Delete a health monitor
 
         :param healthmonitor: The healthmonitor can be either the ID of the
@@ -501,11 +518,12 @@ class Proxy(proxy.Proxy):
             the healthmonitor does not exist.
             When set to ``True``, no exception will be set when attempting to
             delete a nonexistent healthmonitor.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._delete(_hm.HealthMonitor, healthmonitor,
-                            ignore_missing=ignore_missing)
+                            ignore_missing=ignore_missing, **attrs)
 
     def update_health_monitor(self, healthmonitor, **attrs):
         """Update a health monitor
@@ -536,7 +554,7 @@ class Proxy(proxy.Proxy):
         """
         return self._create(_l7policy.L7Policy, **attrs)
 
-    def delete_l7_policy(self, l7_policy, ignore_missing=True):
+    def delete_l7_policy(self, l7_policy, ignore_missing=True, **attrs):
         """Delete a l7policy
 
         :param l7_policy: The value can be either the ID of a l7policy or a
@@ -546,13 +564,14 @@ class Proxy(proxy.Proxy):
             raised when the l7policy does not exist.
             When set to ``True``, no exception will be set when
             attempting to delete a nonexistent l7policy.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         self._delete(_l7policy.L7Policy, l7_policy,
-                     ignore_missing=ignore_missing)
+                     ignore_missing=ignore_missing, **attrs)
 
-    def find_l7_policy(self, name_or_id, ignore_missing=True):
+    def find_l7_policy(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single l7policy
 
         :param name_or_id: The name or ID of a l7policy.
@@ -561,25 +580,27 @@ class Proxy(proxy.Proxy):
             raised when the resource does not exist.
             When set to ``True``, None will be returned when
             attempting to find a nonexistent resource.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.l7_policy.L7Policy`
             or None
         """
         return self._find(_l7policy.L7Policy, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
-    def get_l7_policy(self, l7_policy):
+    def get_l7_policy(self, l7_policy, **attrs):
         """Get a single l7policy
 
         :param l7_policy: The value can be the ID of a l7policy or a
             :class:`~openstack.load_balancer.v2.l7_policy.L7Policy`
             instance.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.l7_policy.L7Policy`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
             when no resource can be found.
         """
-        return self._get(_l7policy.L7Policy, l7_policy)
+        return self._get(_l7policy.L7Policy, l7_policy, **attrs)
 
     def l7_policies(self, **query):
         """Return a generator of l7policies
@@ -619,11 +640,12 @@ class Proxy(proxy.Proxy):
         :returns: The results of l7rule creation
         :rtype: :class:`~openstack.load_balancer.v2.l7_rule.L7Rule`
         """
-        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy)
+        l7policyobj = self._get_resource(_l7policy.L7Policy,
+                                         l7_policy, **attrs)
         return self._create(_l7rule.L7Rule, l7policy_id=l7policyobj.id,
                             **attrs)
 
-    def delete_l7_rule(self, l7rule, l7_policy, ignore_missing=True):
+    def delete_l7_rule(self, l7rule, l7_policy, ignore_missing=True, **attrs):
         """Delete a l7rule
 
         :param l7rule:
@@ -637,14 +659,17 @@ class Proxy(proxy.Proxy):
             raised when the l7rule does not exist.
             When set to ``True``, no exception will be set when
             attempting to delete a nonexistent l7rule.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy)
+        l7policyobj = self._get_resource(_l7policy.L7Policy,
+                                         l7_policy, **attrs)
         self._delete(_l7rule.L7Rule, l7rule, ignore_missing=ignore_missing,
-                     l7policy_id=l7policyobj.id)
+                     l7policy_id=l7policyobj.id, **attrs)
 
-    def find_l7_rule(self, name_or_id, l7_policy, ignore_missing=True):
+    def find_l7_rule(self, name_or_id, l7_policy, ignore_missing=True,
+                     **attrs):
         """Find a single l7rule
 
         :param str name_or_id: The name or ID of a l7rule.
@@ -656,16 +681,18 @@ class Proxy(proxy.Proxy):
             raised when the resource does not exist.
             When set to ``True``, None will be returned when
             attempting to find a nonexistent resource.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.l7_rule.L7Rule`
             or None
         """
-        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy)
+        l7policyobj = self._get_resource(_l7policy.L7Policy,
+                                         l7_policy, **attrs)
         return self._find(_l7rule.L7Rule, name_or_id,
                           ignore_missing=ignore_missing,
-                          l7policy_id=l7policyobj.id)
+                          l7policy_id=l7policyobj.id, **attrs)
 
-    def get_l7_rule(self, l7rule, l7_policy):
+    def get_l7_rule(self, l7rule, l7_policy, **attrs):
         """Get a single l7rule
 
         :param l7rule: The l7rule can be the ID of a l7rule or a
@@ -674,14 +701,16 @@ class Proxy(proxy.Proxy):
         :param l7_policy: The l7_policy can be either the ID of a l7policy or
             :class:`~openstack.load_balancer.v2.l7_policy.L7Policy`
             instance that the l7rule belongs to.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.l7_rule.L7Rule`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
             when no resource can be found.
         """
-        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy)
+        l7policyobj = self._get_resource(_l7policy.L7Policy,
+                                         l7_policy, **attrs)
         return self._get(_l7rule.L7Rule, l7rule,
-                         l7policy_id=l7policyobj.id)
+                         l7policy_id=l7policyobj.id, **attrs)
 
     def l7_rules(self, l7_policy, **query):
         """Return a generator of l7rules
@@ -695,7 +724,7 @@ class Proxy(proxy.Proxy):
         :returns: A generator of l7rule objects
         :rtype: :class:`~openstack.load_balancer.v2.l7_rule.L7Rule`
         """
-        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy)
+        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy, **query)
         return self._list(_l7rule.L7Rule, l7policy_id=l7policyobj.id, **query)
 
     def update_l7_rule(self, l7rule, l7_policy, **attrs):
@@ -713,7 +742,8 @@ class Proxy(proxy.Proxy):
         :returns: The updated l7rule
         :rtype: :class:`~openstack.load_balancer.v2.l7_rule.L7Rule`
         """
-        l7policyobj = self._get_resource(_l7policy.L7Policy, l7_policy)
+        l7policyobj = self._get_resource(_l7policy.L7Policy,
+                                         l7_policy, **attrs)
         return self._update(_l7rule.L7Rule, l7rule,
                             l7policy_id=l7policyobj.id, **attrs)
 
@@ -729,19 +759,20 @@ class Proxy(proxy.Proxy):
         """
         return self._list(_quota.Quota, **query)
 
-    def get_quota(self, quota):
+    def get_quota(self, quota, **attrs):
         """Get a quota
 
         :param quota: The value can be the ID of a quota or a
             :class:`~openstack.load_balancer.v2.quota.Quota`
             instance. The ID of a quota is the same as the project
             ID for the quota.
+        :param dict attrs: Additional keyword arguments
 
         :returns: One :class:`~openstack.load_balancer.v2.quota.Quota`
         :raises: :class:`~openstack.exceptions.ResourceNotFound`
             when no resource can be found.
         """
-        return self._get(_quota.Quota, quota)
+        return self._get(_quota.Quota, quota, **attrs)
 
     def update_quota(self, quota, **attrs):
         """Update a quota
@@ -758,14 +789,14 @@ class Proxy(proxy.Proxy):
         """
         return self._update(_quota.Quota, quota, **attrs)
 
-    def get_quota_default(self):
+    def get_quota_default(self, **attrs):
         """Get a default quota
 
         :returns: One :class:`~openstack.load_balancer.v2.quota.QuotaDefault`
         """
-        return self._get(_quota.QuotaDefault, requires_id=False)
+        return self._get(_quota.QuotaDefault, requires_id=False, **attrs)
 
-    def delete_quota(self, quota, ignore_missing=True):
+    def delete_quota(self, quota, ignore_missing=True, **attrs):
         """Delete a quota (i.e. reset to the default quota)
 
         :param quota: The value can be either the ID of a quota or a
@@ -777,10 +808,12 @@ class Proxy(proxy.Proxy):
             raised when quota does not exist.
             When set to ``True``, no exception will be set when
             attempting to delete a nonexistent quota.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        self._delete(_quota.Quota, quota, ignore_missing=ignore_missing)
+        self._delete(_quota.Quota, quota,
+                     ignore_missing=ignore_missing, **attrs)
 
     def providers(self, **query):
         """Retrieve a generator of providers
@@ -829,7 +862,7 @@ class Proxy(proxy.Proxy):
         """
         return self._list(_flavor_profile.FlavorProfile, **query)
 
-    def delete_flavor_profile(self, flavor_profile, ignore_missing=True):
+    def delete_flavor_profile(self, flavor_profile, ignore_missing=True, **attrs):
         """Delete a flavor profile
 
         :param flavor_profile: The flavor_profile can be either the name or a
@@ -840,13 +873,14 @@ class Proxy(proxy.Proxy):
             the flavor profile does not exist.
             When set to ``True``, no exception will be set when attempting to
             delete a nonexistent flavor profile.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         self._delete(_flavor_profile.FlavorProfile, flavor_profile,
-                     ignore_missing=ignore_missing)
+                     ignore_missing=ignore_missing, **attrs)
 
-    def find_flavor_profile(self, name_or_id, ignore_missing=True):
+    def find_flavor_profile(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single flavor profile
 
         :param name_or_id: The name or ID of a flavor profile
@@ -855,11 +889,12 @@ class Proxy(proxy.Proxy):
             when the flavor profile does not exist.
             When set to ``True``, no exception will be set when attempting
             to delete a nonexistent flavor profile.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_flavor_profile.FlavorProfile, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def update_flavor_profile(self, flavor_profile, **attrs):
         """Update a flavor profile
@@ -907,7 +942,7 @@ class Proxy(proxy.Proxy):
         """
         return self._list(_flavor.Flavor, **query)
 
-    def delete_flavor(self, flavor, ignore_missing=True):
+    def delete_flavor(self, flavor, ignore_missing=True, **attrs):
         """Delete a flavor
 
         :param flavor: The flavorcan be either the name or a
@@ -917,12 +952,14 @@ class Proxy(proxy.Proxy):
             the flavor does not exist.
             When set to ``True``, no exception will be set when attempting to
             delete a nonexistent flavor.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        self._delete(_flavor.Flavor, flavor, ignore_missing=ignore_missing)
+        self._delete(_flavor.Flavor, flavor,
+                     ignore_missing=ignore_missing, **attrs)
 
-    def find_flavor(self, name_or_id, ignore_missing=True):
+    def find_flavor(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single flavor
 
         :param name_or_id: The name or ID of a flavor
@@ -931,11 +968,12 @@ class Proxy(proxy.Proxy):
             when the flavor does not exist.
             When set to ``True``, no exception will be set when attempting
             to delete a nonexistent flavor.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_flavor.Flavor, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def update_flavor(self, flavor, **attrs):
         """Update a flavor
@@ -968,7 +1006,7 @@ class Proxy(proxy.Proxy):
         """
         return self._get(_amphora.Amphora, *attrs)
 
-    def find_amphora(self, amphora_id, ignore_missing=True):
+    def find_amphora(self, amphora_id, ignore_missing=True, **attrs):
         """Find a single amphora
 
         :param amphora_id: The ID of a amphora
@@ -977,29 +1015,34 @@ class Proxy(proxy.Proxy):
             when the amphora does not exist.
             When set to ``True``, no exception will be set when attempting
             to find a nonexistent amphora.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_amphora.Amphora, amphora_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def configure_amphora(self, amphora_id, **attrs):
         """Update the configuration of an amphora agent
 
         :param amphora_id: The ID of an amphora
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        return self._update(_amphora.AmphoraConfig, amphora_id=amphora_id)
+        return self._update(_amphora.AmphoraConfig,
+                            amphora_id=amphora_id, **attrs)
 
     def failover_amphora(self, amphora_id, **attrs):
         """Failover an amphora
 
         :param amphora_id: The ID of an amphora
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
-        return self._update(_amphora.AmphoraFailover, amphora_id=amphora_id)
+        return self._update(_amphora.AmphoraFailover,
+                            amphora_id=amphora_id, **attrs)
 
     def create_availability_zone_profile(self, **attrs):
         """Create a new availability zone profile from attributes
@@ -1039,7 +1082,7 @@ class Proxy(proxy.Proxy):
                           **query)
 
     def delete_availability_zone_profile(self, availability_zone_profile,
-                                         ignore_missing=True):
+                                         ignore_missing=True, **attrs):
         """Delete an availability zone profile
 
         :param availability_zone_profile: The availability_zone_profile can be
@@ -1051,13 +1094,16 @@ class Proxy(proxy.Proxy):
             the availability zone profile does not exist.
             When set to ``True``, no exception will be set when attempting to
             delete a nonexistent availability zone profile.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         self._delete(_availability_zone_profile.AvailabilityZoneProfile,
-                     availability_zone_profile, ignore_missing=ignore_missing)
+                     availability_zone_profile, ignore_missing=ignore_missing,
+                     **attrs)
 
-    def find_availability_zone_profile(self, name_or_id, ignore_missing=True):
+    def find_availability_zone_profile(self, name_or_id, ignore_missing=True,
+                                       **attrs):
         """Find a single availability zone profile
 
         :param name_or_id: The name or ID of a availability zone profile
@@ -1066,11 +1112,13 @@ class Proxy(proxy.Proxy):
             when the availability zone profile does not exist.
             When set to ``True``, no exception will be set when attempting
             to delete a nonexistent availability zone profile.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_availability_zone_profile.AvailabilityZoneProfile,
-                          name_or_id, ignore_missing=ignore_missing)
+                          name_or_id, ignore_missing=ignore_missing,
+                          **attrs)
 
     def update_availability_zone_profile(self, availability_zone_profile,
                                          **attrs):
@@ -1123,7 +1171,8 @@ class Proxy(proxy.Proxy):
         """
         return self._list(_availability_zone.AvailabilityZone, **query)
 
-    def delete_availability_zone(self, availability_zone, ignore_missing=True):
+    def delete_availability_zone(self, availability_zone, ignore_missing=True,
+                                 **attrs):
         """Delete an availability_zone
 
         :param availability_zone: The availability_zone can be either the name
@@ -1135,13 +1184,14 @@ class Proxy(proxy.Proxy):
             the availability zone does not exist.
             When set to ``True``, no exception will be set when attempting to
             delete a nonexistent availability zone.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         self._delete(_availability_zone.AvailabilityZone, availability_zone,
-                     ignore_missing=ignore_missing)
+                     ignore_missing=ignore_missing, **attrs)
 
-    def find_availability_zone(self, name_or_id, ignore_missing=True):
+    def find_availability_zone(self, name_or_id, ignore_missing=True, **attrs):
         """Find a single availability zone
 
         :param name_or_id: The name or ID of a availability zone
@@ -1150,11 +1200,12 @@ class Proxy(proxy.Proxy):
             when the availability zone does not exist.
             When set to ``True``, no exception will be set when attempting
             to delete a nonexistent availability zone.
+        :param dict attrs: Additional keyword arguments
 
         :returns: ``None``
         """
         return self._find(_availability_zone.AvailabilityZone, name_or_id,
-                          ignore_missing=ignore_missing)
+                          ignore_missing=ignore_missing, **attrs)
 
     def update_availability_zone(self, availability_zone, **attrs):
         """Update an availability zone
